@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TodoList</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-width: 250px;
+      font-family: sans-serif;
+    }
+
+    .header {
+      background-color: #f44336;
+      padding: 40px;
+      color: white;
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 10px;
+    }
+
+    .input-group {
+      display: flex;
+      gap: 8px;
+    }
+
+    input {
+      flex: 1;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+    }
+
+    input:focus {
+      outline: none;
+      border: 2px solid salmon;
+    }
+
+    .addBtn {
+      padding: 10px 16px;
+      background: #ddd;
+      cursor: pointer;
+      border-radius: 8px;
+    }
+
+    .addBtn:hover {
+      background: #bbb;
+    }
+
+    .search {
+      margin-top: 10px;
+      width: 100%;
+    }
+
+    ul {
+      margin-top: 10px;
+    }
+
+    ul li {
+      position: relative;
+      padding: 12px 40px;
+      list-style: none;
+      background: #eee;
+      cursor: pointer;
+    }
+
+    ul li:nth-child(odd) {
+      background: #f9f9f9;
+    }
+
+    ul li.checked {
+      background: #888;
+      color: white;
+      text-decoration: line-through;
+    }
+
+    .close {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="header">
+    <h2>My Todo List</h2>
+
+    <div class="input-group">
+      <input id="todoInput" placeholder="Add new task..." />
+      <button class="addBtn" id="addBtn">Add</button>
+    </div>
+
+    <input id="searchInput" class="search" placeholder="Search task..." />
+  </div>
+
+  <ul id="todoList">
+    <li>Hit the gym</li>
+    <li class="checked">Pay bills</li>
+    <li>Meet George</li>
+  </ul>
+
+  <script>
+    const todoInput = document.getElementById("todoInput");
+    const searchInput = document.getElementById("searchInput");
+    const addBtn = document.getElementById("addBtn");
+    const todoList = document.getElementById("todoList");
+
+
+    function createTodoItem(text) {
+      const li = document.createElement("li");
+      li.textContent = text;
+
+      const closeBtn = document.createElement("span");
+      closeBtn.textContent = "×";
+      closeBtn.className = "close";
+
+      li.appendChild(closeBtn);
+      return li;
+    }
+
+    function addTodo() {
+      const value = todoInput.value.trim();
+      if (!value) return alert("Isi dulu!");
+
+      const li = createTodoItem(value);
+      todoList.appendChild(li);
+
+      todoInput.value = "";
+    }
+
+    function filterTodos() {
+      const keyword = searchInput.value.toLowerCase();
+      const items = todoList.querySelectorAll("li");
+
+      items.forEach(item => {
+        const text = item.textContent.toLowerCase();
+        item.style.display = text.includes(keyword) ? "" : "none";
+      });
+    }
+    
+    addBtn.addEventListener("click", addTodo);
+
+    todoInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") addTodo();
+    });
+
+    searchInput.addEventListener("input", filterTodos);
+
+    // Event delegation (clean & scalable)
+    todoList.addEventListener("click", (e) => {
+      if (e.target.classList.contains("close")) {
+        e.target.parentElement.remove();
+      } else if (e.target.tagName === "LI") {
+        e.target.classList.toggle("checked");
+      }
+    });
+
+    // Init existing items (add close button)
+    document.querySelectorAll("#todoList li").forEach(li => {
+      const closeBtn = document.createElement("span");
+      closeBtn.textContent = "×";
+      closeBtn.className = "close";
+      li.appendChild(closeBtn);
+    });
+
+  </script>
+</body>
+</html>
